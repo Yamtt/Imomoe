@@ -39,7 +39,6 @@ class SettingFragment : BasePreferenceFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        listView.addFitsSystemWindows(right = true, bottom = true)
         // 清理历史记录
         viewModel.deleteAllHistory.collectWithLifecycle(viewLifecycleOwner) { data ->
             data.second.showToast()
@@ -139,6 +138,14 @@ class SettingFragment : BasePreferenceFragment() {
             setOnPreferenceClickListener {
                 requireActivity().selectDarkMode()
                 false
+            }
+        }
+
+        findPreference<CheckBoxPreference>("disable_screenshot")?.apply {
+            isChecked = disableScreenshot
+            setOnPreferenceChangeListener { _, newValue ->
+                disableScreenshot = newValue as? Boolean ?: false
+                true
             }
         }
 

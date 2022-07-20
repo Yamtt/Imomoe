@@ -63,7 +63,7 @@ class PlayActivity : DetailPlayerActivity<DanmakuVideoPlayer, ActivityPlayBindin
                 HorizontalRecyclerView1Proxy(onMoreButtonClickListener = { _, _, _ ->
                     EpisodeDialogFragment(
                         backgroundDim = false,
-                        offsetFromTop = if (resources.getBoolean(R.bool.is_landscape)) {
+                        offsetFromTop = if (screenIsLand) {
                             null
                         } else {
                             mBinding.avpPlayActivity.height
@@ -92,10 +92,6 @@ class PlayActivity : DetailPlayerActivity<DanmakuVideoPlayer, ActivityPlayBindin
     override fun transparentSystemBar(): Boolean = false
 
     private fun initView() {
-        currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        window.statusBarColor = Color.BLACK
-        WindowInsetsControllerCompat(window, mBinding.root).isAppearanceLightStatusBars = false
-
         mBinding.apply {
             root.addFitsSystemWindows(right = true, top = true)
             rvPlayActivity.addFitsSystemWindows(right = true, bottom = true)
@@ -124,7 +120,7 @@ class PlayActivity : DetailPlayerActivity<DanmakuVideoPlayer, ActivityPlayBindin
                     R.id.menu_item_play_activity_download -> {
                         EpisodeDialogFragment(
                             backgroundDim = false,
-                            offsetFromTop = if (resources.getBoolean(R.bool.is_landscape)) {
+                            offsetFromTop = if (screenIsLand) {
                                 null
                             } else {
                                 mBinding.avpPlayActivity.height
@@ -186,6 +182,10 @@ class PlayActivity : DetailPlayerActivity<DanmakuVideoPlayer, ActivityPlayBindin
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        window.statusBarColor = Color.BLACK
+        WindowInsetsControllerCompat(window, mBinding.root).isAppearanceLightStatusBars = false
+
         initView()
 
         viewModel.setActivity(this)
@@ -198,7 +198,9 @@ class PlayActivity : DetailPlayerActivity<DanmakuVideoPlayer, ActivityPlayBindin
             rvPlayActivity.layoutManager = GridLayoutManager(
                 this@PlayActivity,
                 AnimeShowSpanSize.MAX_SPAN_SIZE
-            ).apply { spanSizeLookup = AnimeShowSpanSize(adapter) }
+            ).apply {
+                spanSizeLookup = AnimeShowSpanSize(adapter = adapter, enableLandScape = false)
+            }
             rvPlayActivity.addItemDecoration(AnimeShowItemDecoration())
             rvPlayActivity.adapter = adapter
 

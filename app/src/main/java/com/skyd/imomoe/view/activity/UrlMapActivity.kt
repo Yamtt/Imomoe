@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,7 +44,7 @@ import com.skyd.imomoe.view.component.compose.TopBarIcon
 import com.skyd.imomoe.view.fragment.DataSourceMarketFragment
 import com.skyd.imomoe.viewmodel.UrlMapViewModel
 
-class UrlMapActivity : BaseComponentActivity() {
+class UrlMapActivity : BaseComposeActivity() {
     private val viewModel: UrlMapViewModel by viewModels()
 
     companion object {
@@ -85,7 +86,7 @@ class UrlMapActivity : BaseComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UrlMapScreen(viewModel: UrlMapViewModel = hiltViewModel()) {
+private fun UrlMapScreen(viewModel: UrlMapViewModel = hiltViewModel()) {
     val context = LocalContext.current
     Scaffold(topBar = {
         AnimeTopBar(
@@ -120,7 +121,7 @@ fun UrlMapScreen(viewModel: UrlMapViewModel = hiltViewModel()) {
             },
         )
     }) {
-        UrlMapList(it)
+        UrlMapList(modifier = Modifier.padding(it))
         if (showEditDialog.value) {
             EditDialog(
                 title = stringResource(id = R.string.add),
@@ -151,7 +152,7 @@ private var urlMapEnabled by mutableStateOf(com.skyd.imomoe.net.urlMapEnabled)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UrlMapEnabledCard() {
+private fun UrlMapEnabledCard() {
     Card(
         modifier = Modifier
             .padding(vertical = 7.dp)
@@ -196,12 +197,12 @@ fun UrlMapEnabledCard() {
  * 展示列表
  */
 @Composable
-fun UrlMapList(paddingValues: PaddingValues) {
+private fun UrlMapList(modifier: Modifier = Modifier) {
     val viewModel: UrlMapViewModel = hiltViewModel()
     val urlMapListState by viewModel.urlMapList.collectAsState()
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = paddingValues + WindowInsets.navigationBars.asPaddingValues() +
+        modifier = modifier.fillMaxSize(),
+        contentPadding = WindowInsets.navigationBars.asPaddingValues() +
                 PaddingValues(horizontal = 16.dp, vertical = 6.dp),
     ) {
         item {
@@ -224,7 +225,7 @@ fun UrlMapList(paddingValues: PaddingValues) {
  */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun UrlMapItem(urlMapEntity: UrlMapEntity) {
+private fun UrlMapItem(urlMapEntity: UrlMapEntity) {
     val viewModel: UrlMapViewModel = hiltViewModel()
     var menuExpanded by remember { mutableStateOf(false) }
     val enabledData = urlMapEntity.enabled
@@ -326,12 +327,12 @@ fun UrlMapItem(urlMapEntity: UrlMapEntity) {
     }
 }
 
-val showEditDialog = mutableStateOf(false)
-val editDialogData = mutableStateOf<Pair<String, String>?>(null)
+private val showEditDialog = mutableStateOf(false)
+private val editDialogData = mutableStateOf<Pair<String, String>?>(null)
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun EditDialog(
+private fun EditDialog(
     title: String,
     onConfirm: (oldUrl: String, newUrl: String) -> Unit
 ) {
@@ -342,6 +343,9 @@ fun EditDialog(
         onDismissRequest = {
             showEditDialog.value = false
             editDialogData.value = null
+        },
+        icon = {
+            Icon(Icons.Rounded.Edit, null)
         },
         title = {
             Text(text = title)
@@ -403,15 +407,18 @@ fun EditDialog(
     )
 }
 
-val showDeleteDialog = mutableStateOf(false)
-val deleteDialogOldUrl = mutableStateOf<String?>(null)
+private val showDeleteDialog = mutableStateOf(false)
+private val deleteDialogOldUrl = mutableStateOf<String?>(null)
 
 @Composable
-fun DeleteDialog(viewModel: UrlMapViewModel = hiltViewModel()) {
+private fun DeleteDialog(viewModel: UrlMapViewModel = hiltViewModel()) {
     AlertDialog(
         onDismissRequest = {
             showDeleteDialog.value = false
             deleteDialogOldUrl.value = null
+        },
+        icon = {
+            Icon(Icons.Rounded.Warning, null)
         },
         title = {
             Text(text = stringResource(id = R.string.warning))
@@ -445,12 +452,11 @@ fun DeleteDialog(viewModel: UrlMapViewModel = hiltViewModel()) {
     )
 }
 
-val showJsonDialog = mutableStateOf(false)
-val jsonDialogData = mutableStateOf<String?>(null)
+private val showJsonDialog = mutableStateOf(false)
+private val jsonDialogData = mutableStateOf<String?>(null)
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun JsonDialog(
+private fun JsonDialog(
     title: String,
     onConfirm: (jsonData: String) -> Unit
 ) {
@@ -460,6 +466,9 @@ fun JsonDialog(
         onDismissRequest = {
             showJsonDialog.value = false
             jsonDialogData.value = null
+        },
+        icon = {
+            Icon(painter = painterResource(id = R.drawable.ic_playlist_add_24), null)
         },
         title = {
             Text(text = title)

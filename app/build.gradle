@@ -3,14 +3,19 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'com.google.devtools.ksp'
+//    id 'com.flurry.android.symbols'
 }
 
 apply from: secret
+
+def buildTime = new Date().format("YYYY-MM-dd HH:mm:ss", TimeZone.getTimeZone("GMT+8:00"))
 
 android.defaultConfig {
     secret.buildConfigField.forEach({ k, v ->
         buildConfigField("String", k, "\"${v}\"")
     })
+    buildConfigField("String", "BUILD_TIME", "\"${buildTime}\"")
     secret.shieldTextList.forEach({ k, v ->
         buildConfigField("String[]", k, v)
     })
@@ -36,10 +41,8 @@ android {
         renderscriptTargetApi 19
         renderscriptSupportModeEnabled true
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
 
         ndk {
@@ -136,7 +139,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion '1.2.0'
     }
 }
 
@@ -155,13 +158,17 @@ dependencies {
     implementation deps.support.preference
     implementation deps.support.security_crypto
     implementation deps.support.core_splashscreen
+    implementation deps.support.profileinstaller
     implementation deps.compose.ui
+    implementation deps.compose.constraintlayout_compose
     implementation deps.compose.material3
+    implementation deps.compose.ui_viewbinding
     implementation deps.compose.ui_tooling_preview
     implementation deps.compose.runtime_livedata
     implementation deps.compose.compose_theme_adapter
-    implementation deps.compose.material3_windo_size_class
+    implementation deps.compose.material3_window_size_class
     implementation deps.accompanist.systemuicontroller
+    implementation deps.accompanist.swiperefresh
     implementation deps.jsoup.jsoup
     implementation deps.lifecycle.lifecycle_viewmodel_ktx
     implementation deps.lifecycle.lifecycle_runtime_ktx
@@ -171,7 +178,8 @@ dependencies {
     kapt deps.hilt.hilt_android_compiler
     implementation deps.okhttp3.okhttp
     implementation deps.okhttp3.logging_interceptor
-    implementation deps.shuyu.GSYVideoPlayer
+    implementation deps.shuyu.gsyVideoPlayer_java
+    implementation deps.shuyu.gsyVideoPlayer_exo2
     implementation deps.retrofit2.retrofit
     implementation deps.retrofit2.converter_gson
     implementation deps.getActivity.XXPermissions
@@ -179,7 +187,7 @@ dependencies {
     implementation deps.room.room_runtime
     implementation deps.room.room_ktx
     implementation deps.support.legacy_support_v4
-    kapt deps.room.room_compiler
+    ksp deps.room.room_compiler
     implementation deps.aria.core
     kapt deps.aria.compiler
     implementation deps.aria.m3u8Component
@@ -198,12 +206,19 @@ dependencies {
     implementation deps.smart.refresh_header_material
     implementation deps.smart.refresh_footer_ball
     implementation deps.coil_kt.coil
+    implementation deps.coil_kt.coil_compose
     implementation deps.kuaishou.akdanmaku
     implementation deps.vadiole.colorpicker
     implementation deps.commons.commons_text
     implementation deps.okhttp3.okhttp_dnsoverhttps
     implementation deps.thegrizzlylabs.sardine_android
 }
+
+//flurryCrash {
+//    apiKey secret.buildConfigField.FLURRY_API_KEY
+//    useEnvVar false
+//    token secret.buildConfigField.PROGRAMMATIC_TOKEN
+//}
 
 /**
  * 下面是生成数据源Jar的过程。保证生成了数据源的class文件后，再直接运行makeAds任务即可

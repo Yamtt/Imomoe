@@ -6,6 +6,9 @@
         <a href="https://codebeat.co/projects/github-com-skyd666-imomoe-master" style="text-decoration:none">
             <img src="https://codebeat.co/badges/63fb5d12-bece-4d8f-913e-5bcde2f01242" alt="codebeat badge"  />
         </a>
+        <a href="https://github.com/SkyD666/Imomoe/actions" style="text-decoration:none">
+            <img src="https://img.shields.io/github/workflow/status/SkyD666/Imomoe/Pre-Release" alt="GitHub Workflow Status"  />
+        </a>
         <a href="https://github.com/SkyD666/Imomoe/releases/latest" style="text-decoration:none">
             <img src="https://img.shields.io/github/v/release/SkyD666/Imomoe?display_name=release" alt="GitHub release (latest by date)"/>
         </a>
@@ -27,13 +30,7 @@
     </p>
 </div>
 
-
-
-
 ----
-
-## [>>必看使用说明(自定义数据源)<<](doc/customdatasource/README.md)
-
 ## Discord频道：https://discord.gg/MyaRtRGEzr
 
 ### 可以选择将自制数据源共享到[DataSourceRepository](https://github.com/SkyD666/DataSourceRepository)仓库，自制数据源/后端[帮助文档](doc/customdatasource/RV_ITEM.md)
@@ -82,11 +79,11 @@
 - Kotlin Coroutine
 - Hilt
 - Room
-- 少部分Jetpack Compose
+- Jetpack Compose
 - SplashScreen
 - DiffUtil
 - Retrofit
-- Okhttp
+- OkHttp
 - Jsoup
 - ......
 
